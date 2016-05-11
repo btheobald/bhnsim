@@ -57,19 +57,53 @@ bounds* newBounds(int quadrant, bounds* p_currentBounds) {
   return tempBounds;
 }
 
+void updateNodeMV(node* currentNode) {
+  float nodeMass = 0;
+  float nodePosX = 0,
+  float nodePosY = 0;
+
+  // Check for branches
+  for(int q = 0; q < 4; q++) {
+    if(currentNode->branches[q]) {
+      // Recurse down into branch
+      updateNodeMV(currentNode->branches[q]);
+
+      // Create tempoary quick body pointer.
+      body* qbp = currentNode->branches[q]->nodeBody;
+
+      // Sum total mass of branches
+      nodeMass += qbp->m;
+
+      // Sum weighted mean position
+      nodePosX += qbp->xP * qbp->m;
+      nodePosY += qbp->yP * qbp->m;
+    }
+
+    // Get final weigted mean
+    nodePosX /= nodeMass;
+    nodePosY /= nodeMass;
+
+    // Update current node (Branched nodes only, leaves are not modified)
+    currentNode->nodeBody->m = nodeMass;
+    currentNode->nodeBody->xP = nodePosX;
+    currentNode->nodeBody->yP = nodePosY;
+  }
+}
+
 // Inset a body into the tree.
 int addBody(body* p_body, node* currentNode) {
-  if(!nodeBody) { // Check if node has branches.
+  if(!currentNode->nodeBody) { // Check if node is populated
     currentNode->nodeBody = p_body;
-  } else if(currentNode->nodeBody == -1) { // Check required branch.
-    requiredBranch = checkBounds(p_body, currentNode->nodeBounds)];
-    if(!currentNode->branches[requiredBranch]) {
-      // If empty insert body
-      currentNode->nodeBody = p_body;
-    } else {
-      // If node does not exist
-      bounds* tempBounds = newBounds(requiredBranch, currentNode->nodeBounds);
-      currentNode->branches[requiredBranch] = createNode(tempBounds);
-    }
   }
+  // Check if node is populated
+    // If empty populate
+  // If populated
+    // Get required quadrant
+    // Check if required quadrant already exists
+      // If exists recursively add into quadrant
+    // If quadrant does not exist create, calculate bounds
+      // Recursively add into quadrant
+      // If first new quadrant for node
+        // Recursively add node body
+        // Update total mass and mean position for node
 }

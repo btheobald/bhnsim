@@ -1,3 +1,5 @@
+#include "body.h"
+
 typedef struct bounds {
   // Bounds
   float centerX, centerY;
