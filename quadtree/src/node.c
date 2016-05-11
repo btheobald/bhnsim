@@ -1,7 +1,7 @@
 #include "node.h"
 
 // Allocates memory and initialises node data structure.
-node* createNode(bounds* p_odeBounds) {
+node* createNode(bounds* p_nodeBounds) {
   // Allocate memory for nodes
   node* tempNode = malloc(sizeof(node));
   tempNode->nodeBounds = p_nodeBounds;
@@ -57,19 +57,19 @@ bounds* newBounds(int quadrant, bounds* p_currentBounds) {
   return tempBounds;
 }
 
-void updateNodeMV(node* currentNode) {
+void updateNodeMP(node* p_currentNode) {
   float nodeMass = 0;
   float nodePosX = 0,
   float nodePosY = 0;
 
   // Check for branches
   for(int q = 0; q < 4; q++) {
-    if(currentNode->branches[q]) {
+    if(p_currentNode->branches[q]) {
       // Recurse down into branch
-      updateNodeMV(currentNode->branches[q]);
+      updateNodeMP(p_currentNode->branches[q]);
 
       // Create tempoary quick body pointer.
-      body* qbp = currentNode->branches[q]->nodeBody;
+      body* qbp = p_currentNode->branches[q]->nodeBody;
 
       // Sum total mass of branches
       nodeMass += qbp->m;
@@ -84,26 +84,44 @@ void updateNodeMV(node* currentNode) {
     nodePosY /= nodeMass;
 
     // Update current node (Branched nodes only, leaves are not modified)
-    currentNode->nodeBody->m = nodeMass;
-    currentNode->nodeBody->xP = nodePosX;
-    currentNode->nodeBody->yP = nodePosY;
+    p_currentNode->nodeBody->m = nodeMass;
+    p_currentNode->nodeBody->xP = nodePosX;
+    p_currentNode->nodeBody->yP = nodePosY;
   }
 }
 
-// Inset a body into the tree.
-int addBody(body* p_body, node* currentNode) {
-  if(!currentNode->nodeBody) { // Check if node is populated
-    currentNode->nodeBody = p_body;
+int firstNewBranch(node* p_currentNode) {
+  // Check if first new quadrant
+  int check = 0;
+  for(int n = 0; n < 4; n++) {
+    if(p_currentNode->branches[n])
+      check++;
   }
-  // Check if node is populated
-    // If empty populate
-  // If populated
-    // Get required quadrant
-    // Check if required quadrant already exists
-      // If exists recursively add into quadrant
-    // If quadrant does not exist create, calculate bounds
-      // Recursively add into quadrant
-      // If first new quadrant for node
-        // Recursively add node body
-        // Update total mass and mean position for node
+
+  if(check == 1) return 1; // If first new quadrant
+
+  return 0; // If not first
+}
+
+// Inset a body into the tree.
+int addBody(body* p_body, node* p_currentNode) {
+  if(!p_currentNode->nodeBody) { // Populate node if empty
+    p_currentNode->nodeBody = p_body;
+  } else { // If not empty
+    int reqBranch = checkBounds(p_body, p_currentNode->nodeBounds);
+
+    if(p_currentNode->branches[reqBranch]) { // Check if required branch exists
+      addBody(p_body, p_currentNode->branches[reqBranch]); // Recursively add to branch
+    } else { // If branch does not exist
+      p_currentNode->branches[reqBranch] = createNode(newBounds(reqBranch, p_currentNode->branches)); // Create new node on branch
+      addBody(p_body, p_currentNode->branches[reqBranch]); // Recursively add to branch
+
+      if(firstNewBranch(p_currentNode)) {
+        addBody(p_currentNode->nodeBody, p_currentNode);
+      }
+    }
+
+    // Update total mass and mean position for node
+    updateNodeMP(p_currentNode);
+  }
 }
