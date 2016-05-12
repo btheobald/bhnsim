@@ -1,4 +1,7 @@
 #include "node.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Allocates memory and initialises node data structure.
 node* createNode(bounds* p_nodeBounds) {
@@ -7,9 +10,9 @@ node* createNode(bounds* p_nodeBounds) {
   tempNode->nodeBounds = p_nodeBounds;
 
   // Null data and node pointers
-  body* nodeBody = NULL;
+  tempNode->nodeBody = NULL;
   for(int i = 0; i < 4; i++) {
-    branches[i] = NULL;
+    tempNode->branches[i] = NULL;
   }
 
   // Return node pointer
@@ -18,14 +21,15 @@ node* createNode(bounds* p_nodeBounds) {
 
 // Check and return valid quadrant for body insertion.
 int checkBounds(body* p_body, bounds* p_bounds) {
-  if(body->xP <= p_bounds->centerX & body->yP > p_bounds->centerY)
+  if((p_body->xP <= p_bounds->centerX) & (p_body->yP >  p_bounds->centerY))
     return 0;
-  if(body->xP > p_bounds->centerX & body->yP > p_bounds->centerY)
+  if((p_body->xP >  p_bounds->centerX) & (p_body->yP >  p_bounds->centerY))
     return 1;
-  if(body->xP <= p_bounds->centerX & body->yP <= p_bounds->centerY)
+  if((p_body->xP <= p_bounds->centerX) & (p_body->yP <= p_bounds->centerY))
     return 2;
-  if(body->xP > p_bounds->centerX & body->yP <= p_bounds->centerY)
+  if((p_body->xP >  p_bounds->centerX) & (p_body->yP <= p_bounds->centerY))
     return 3;
+  return -1;
 }
 
 bounds* newBounds(int quadrant, bounds* p_currentBounds) {
@@ -33,22 +37,22 @@ bounds* newBounds(int quadrant, bounds* p_currentBounds) {
   bounds* tempBounds = malloc(sizeof(bounds));
 
   // Set new half distance
-  tempBounds->halfDistance = p_currentBounds/2;
+  tempBounds->halfDistance = p_currentBounds->halfDistance/2;
 
   // Set new center point
-  if(quadrant = 0) {
+  if(quadrant == 0) {
     tempBounds->centerX = p_currentBounds->centerX-p_currentBounds->halfDistance;
     tempBounds->centerY = p_currentBounds->centerY+p_currentBounds->halfDistance;
   }
-  if(quadrant = 1) {
+  if(quadrant == 1) {
     tempBounds->centerX = p_currentBounds->centerX+p_currentBounds->halfDistance;
     tempBounds->centerY = p_currentBounds->centerY+p_currentBounds->halfDistance;
   }
-  if(quadrant = 2) {
+  if(quadrant == 2) {
     tempBounds->centerX = p_currentBounds->centerX-p_currentBounds->halfDistance;
     tempBounds->centerY = p_currentBounds->centerY-p_currentBounds->halfDistance;
   }
-  if(quadrant = 3) {
+  if(quadrant == 3) {
     tempBounds->centerX = p_currentBounds->centerX+p_currentBounds->halfDistance;
     tempBounds->centerY = p_currentBounds->centerY-p_currentBounds->halfDistance;
   }
@@ -59,7 +63,7 @@ bounds* newBounds(int quadrant, bounds* p_currentBounds) {
 
 void updateNodeMP(node* p_currentNode) {
   float nodeMass = 0;
-  float nodePosX = 0,
+  float nodePosX = 0;
   float nodePosY = 0;
 
   // Check for branches
@@ -104,7 +108,7 @@ int firstNewBranch(node* p_currentNode) {
 }
 
 // Inset a body into the tree.
-int addBody(body* p_body, node* p_currentNode) {
+void addBody(body* p_body, node* p_currentNode) {
   if(!p_currentNode->nodeBody) { // Populate node if empty
     p_currentNode->nodeBody = p_body;
   } else { // If not empty
@@ -113,15 +117,50 @@ int addBody(body* p_body, node* p_currentNode) {
     if(p_currentNode->branches[reqBranch]) { // Check if required branch exists
       addBody(p_body, p_currentNode->branches[reqBranch]); // Recursively add to branch
     } else { // If branch does not exist
-      p_currentNode->branches[reqBranch] = createNode(newBounds(reqBranch, p_currentNode->branches)); // Create new node on branch
+      p_currentNode->branches[reqBranch] = createNode(newBounds(reqBranch, p_currentNode->nodeBounds)); // Create new node on branch
       addBody(p_body, p_currentNode->branches[reqBranch]); // Recursively add to branch
 
       if(firstNewBranch(p_currentNode)) {
         addBody(p_currentNode->nodeBody, p_currentNode);
+        p_currentNode->nodeBody = createBody(0, 0, 0, 0, 0);
       }
     }
 
     // Update total mass and mean position for node
     updateNodeMP(p_currentNode);
+  }
+}
+
+// Delete Entire Tree, Frees all memory for bodies and tree. Starts recursively from root.
+void delTree(node* rootNode) {
+  for(int i = 0; i < 4; i++) {
+    if(rootNode->branches[i]) {
+      // Recurse into tree.
+      delTree(rootNode->branches[i]);
+    }
+  }
+  // Free node memory
+  if(rootNode->nodeBody) {
+    free(rootNode->nodeBody);
+  }
+  free(rootNode->nodeBounds);
+  free(rootNode);
+}
+
+void insertTabs(int n) {
+  for(int l = 0; l < n; l++) {
+    printf("  ");
+  }
+}
+
+void printTree(node* rootNode, int level) {
+  insertTabs(level);
+  printf("\\-%d\n", level);
+  for(int i = 0; i < 4; i++) {
+    if(rootNode->branches[i]) {
+      insertTabs(level+1);
+      printf("|->B%d\n", i);
+      printTree(rootNode->branches[i], level+1);
+    }
   }
 }

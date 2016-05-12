@@ -14,7 +14,7 @@ LIB_DIR     = lib
 
 SOURCES    := $(wildcard $(SOURCE_DIR)/*.c)
 INCLUDES   := $(wildcard $(INCLUDE_DIR)/*.h)
-OBJECTS    := $(SOURCES:$(SOURCE_DIR)/%.cpp=$(BINARY_DIR)/%.o)
+OBJECTS    := $(SOURCES:$(SOURCE_DIR)/%.c=$(BINARY_DIR)/%.o)
 
 # Libraries
 LIBS  =

@@ -1,4 +1,4 @@
-typedef struct body {
+typedef struct {
   float m;
   float xP, yP;
   float xV, yV;
