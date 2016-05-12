@@ -36,9 +36,9 @@ int checkBounds(body* p_body, bounds* p_bounds);
 int firstNewBranch(node* p_currentNode);
 
 // Inset a body into the tree.
-void addBody(body* p_body, node* p_currentNode);
+int addBody(body* p_body, node* p_currentNode);
 
 // Delete tree recursively
 void delTree(node* rootNode);
 
-void printTree(node* rootNode, int level); 
+void printTree(node* rootNode, int level);

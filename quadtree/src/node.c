@@ -72,26 +72,28 @@ void updateNodeMP(node* p_currentNode) {
       // Recurse down into branch
       updateNodeMP(p_currentNode->branches[q]);
 
-      // Create tempoary quick body pointer.
-      body* qbp = p_currentNode->branches[q]->nodeBody;
+      if(p_currentNode->branches[q]->nodeBody) {
+        // Create tempoary quick body pointer.
+        body* qbp = p_currentNode->branches[q]->nodeBody;
 
-      // Sum total mass of branches
-      nodeMass += qbp->m;
+        // Sum total mass of branches
+        nodeMass = nodeMass + qbp->m;
 
-      // Sum weighted mean position
-      nodePosX += qbp->xP * qbp->m;
-      nodePosY += qbp->yP * qbp->m;
+        // Sum weighted mean position
+        nodePosX = nodePosX + (qbp->xP * qbp->m);
+        nodePosY = nodePosY + (qbp->yP * qbp->m);
+      }
     }
-
-    // Get final weigted mean
-    nodePosX /= nodeMass;
-    nodePosY /= nodeMass;
-
-    // Update current node (Branched nodes only, leaves are not modified)
-    p_currentNode->nodeBody->m = nodeMass;
-    p_currentNode->nodeBody->xP = nodePosX;
-    p_currentNode->nodeBody->yP = nodePosY;
   }
+
+  // Get final weigted mean
+  nodePosX = nodePosX / nodeMass;
+  nodePosY = nodePosY / nodeMass;
+
+  // Update current node (Branched nodes only, leaves are not modified)
+  p_currentNode->nodeBody->m = nodeMass;
+  p_currentNode->nodeBody->xP = nodePosX;
+  p_currentNode->nodeBody->yP = nodePosY;
 }
 
 int firstNewBranch(node* p_currentNode) {
@@ -108,10 +110,16 @@ int firstNewBranch(node* p_currentNode) {
 }
 
 // Inset a body into the tree.
-void addBody(body* p_body, node* p_currentNode) {
+int addBody(body* p_body, node* p_currentNode) {
   if(!p_currentNode->nodeBody) { // Populate node if empty
     p_currentNode->nodeBody = p_body;
   } else { // If not empty
+    // Check that bodies are not in same position
+    if(((p_currentNode->nodeBody->xP == p_body->xP) & (p_currentNode->nodeBody->yP == p_body->yP)) & !(p_currentNode->nodeBody->m == -1)) {
+      // If bodies are in the same position abort.
+      return 0;
+    }
+
     int reqBranch = checkBounds(p_body, p_currentNode->nodeBounds);
 
     if(p_currentNode->branches[reqBranch]) { // Check if required branch exists
@@ -121,14 +129,19 @@ void addBody(body* p_body, node* p_currentNode) {
       addBody(p_body, p_currentNode->branches[reqBranch]); // Recursively add to branch
 
       if(firstNewBranch(p_currentNode)) {
-        addBody(p_currentNode->nodeBody, p_currentNode);
-        p_currentNode->nodeBody = createBody(0, 0, 0, 0, 0);
+        // Create temp pointer to preset node body
+        body* temp = p_currentNode->nodeBody;
+        // Create filler body for later average
+        p_currentNode->nodeBody = createBody(-1, 0, 0, 0, 0);
+        addBody(temp, p_currentNode);
       }
     }
 
     // Update total mass and mean position for node
     updateNodeMP(p_currentNode);
   }
+
+  return 1;
 }
 
 // Delete Entire Tree, Frees all memory for bodies and tree. Starts recursively from root.
