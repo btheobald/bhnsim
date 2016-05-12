@@ -115,13 +115,11 @@ int addBody(body* p_body, node* p_currentNode) {
     p_currentNode->nodeBody = p_body;
   } else { // If not empty
     // Check that bodies are not in same position
-    if(((p_currentNode->nodeBody->xP == p_body->xP) & (p_currentNode->nodeBody->yP == p_body->yP)) & !(p_currentNode->nodeBody->m == -1)) {
+    int reqBranch = checkBounds(p_body, p_currentNode->nodeBounds);
+    if(((p_currentNode->nodeBody->xP == p_body->xP) & (p_currentNode->nodeBody->yP == p_body->yP))) {
       // If bodies are in the same position abort.
       return 0;
     }
-
-    int reqBranch = checkBounds(p_body, p_currentNode->nodeBounds);
-
     if(p_currentNode->branches[reqBranch]) { // Check if required branch exists
       addBody(p_body, p_currentNode->branches[reqBranch]); // Recursively add to branch
     } else { // If branch does not exist

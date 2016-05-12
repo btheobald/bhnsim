@@ -23,7 +23,7 @@ int main() {
   // Add body to tree
   addBody(b0, treeRoot);
   addBody(b1, treeRoot);
-  //addBody(b2, treeRoot);
+  addBody(b2, treeRoot);
 
   printf("Total root node mass = %f.\n", treeRoot->nodeBody->m);
 
