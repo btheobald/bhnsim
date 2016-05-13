@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "node.h"
+
+void addRandomBodies(node* p_root, int p_bodies);
 
 int main() {
   // Initialise tree variables
@@ -10,20 +13,13 @@ int main() {
   // Setup initial bounds
   initial->centerX = 0;
   initial->centerY = 0;
-  initial->halfDistance = 10;
-
-  // Create initial bodies
-  body* b0 = createBody(1, 5.0, 1.0, 0, 0);
-  body* b1 = createBody(1, -5.0, 1.0, 0, 0);
-  body* b2 = createBody(1, -8.0, -8.0, 0, 0);
+  initial->halfDistance = 1000;
 
   // Create tree root
   treeRoot = createNode(initial);
 
-  // Add body to tree
-  addBody(b0, treeRoot);
-  addBody(b1, treeRoot);
-  addBody(b2, treeRoot);
+  // Add Random initial bodies
+  addRandomBodies(treeRoot, 1000);
 
   updateNodeMP(treeRoot);
 
@@ -35,4 +31,17 @@ int main() {
 
   // Free tree memory
   delTree(treeRoot);
+}
+
+void addRandomBodies(node* p_root, int p_bodies) {
+  srand(time(NULL));
+
+  float max = 2000.0;
+  float rX, rY;
+
+  for(int n = 0; n < p_bodies; n++) {
+    rX = (((float)rand()/(float)(RAND_MAX)) * max) - 10;
+    rY = (((float)rand()/(float)(RAND_MAX)) * max) - 10;
+    addBody(createBody(1, rX, rY, 0, 0), p_root);
+  }
 }
