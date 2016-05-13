@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 #include "node.h"
 #include "render.h"
 
+void addStructure(node* treeRoot, int p_soBodies, float p_xP, float p_yP, float p_coS, float p_sR);
 void addRandomBodies(node* p_root, int p_bodies);
 void initDisplay(int lXRes, int lYRes);
 GLFWwindow* setupWindow(void);
@@ -19,13 +21,15 @@ int main() {
   // Setup initial bounds
   initial->centerX = 0;
   initial->centerY = 0;
-  initial->halfDistance = 1000;
+  initial->halfDistance = 4000;
 
   // Create tree root
   treeRoot = createNode(initial);
 
   // Add Random initial bodies
-  addRandomBodies(treeRoot, 2);
+  //addRandomBodies(treeRoot, 1000);
+  addStructure(treeRoot, 2000, 0, 0, 20, 2000);
+  addStructure(treeRoot, 1000, 2500, 3000, 20, 1000);
 
   updateNodeMP(treeRoot);
 
@@ -48,13 +52,35 @@ int main() {
 void addRandomBodies(node* p_root, int p_bodies) {
   srand(time(NULL));
 
-  float max = 2000.0;
+  float max = 8000.0;
   float rX, rY;
 
   for(int n = 0; n < p_bodies; n++) {
-    rX = (((float)rand()/(float)(RAND_MAX)) * max) - 1000;
-    rY = (((float)rand()/(float)(RAND_MAX)) * max) - 1000;
+    rX = (((float)rand()/(float)(RAND_MAX)) * max) - 4000;
+    rY = (((float)rand()/(float)(RAND_MAX)) * max) - 4000;
     addBody(createBody(1, rX, rY, 0, 0), p_root);
+  }
+}
+
+void addStructure(node* treeRoot, int p_soBodies, float p_xP, float p_yP, float p_coS, float p_sR) {
+  // Create a Pseudo-random circular distribution of bodies around a central body.
+  float max = p_sR * 2;
+
+  // Temporary Variables
+  double tempRand, tempCirX, tempCirY;
+  // Add Central Body
+  addBody(createBody(1, p_xP, p_yP, 0, 0), treeRoot);
+
+  for(int bIDC = 0; bIDC < p_soBodies; bIDC++) {
+    // Ensure that bodies are not too close to center.
+    do {
+      tempRand = (((float)rand()/(float)(RAND_MAX)) * max) - p_sR;
+    } while((tempRand < p_coS) & (tempRand > -p_coS));
+    // Map to Circle
+    tempCirX = p_xP+(tempRand * cos(2 * 3.14 * tempRand));
+    tempCirY = p_yP+(tempRand * sin(2 * 3.14 * tempRand));
+
+    addBody(createBody(1, tempCirX, tempCirY, 0, 0), treeRoot);
   }
 }
 
@@ -62,7 +88,7 @@ void initDisplay(int lXRes, int lYRes) {
   // Init Projection
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(-lXRes*5, lXRes*5, -lYRes*5, lYRes*5, 1.0f, -1.0f);
+  glOrtho(-lXRes*4, lXRes*4, -lYRes*4, lYRes*4, 1.0f, -1.0f);
 
   // Init Modelview
   glMatrixMode(GL_MODELVIEW);
@@ -81,7 +107,7 @@ GLFWwindow* setupWindow(void) {
   }
 
   // Create window
-  GLFWwindow* window = glfwCreateWindow(500, 500, "QuadTree Example", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(1000, 1000, "QuadTree Example", NULL, NULL);
 
   // Check that window opened
   if(!window) {
@@ -92,7 +118,7 @@ GLFWwindow* setupWindow(void) {
   }
 
   glfwMakeContextCurrent(window);
-  initDisplay(500, 500);
+  initDisplay(1000, 1000);
   //setCallbacks();
 
   return window;
