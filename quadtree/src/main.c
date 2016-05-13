@@ -2,10 +2,16 @@
 #include <stdlib.h>
 #include <time.h>
 #include "node.h"
+#include "render.h"
 
 void addRandomBodies(node* p_root, int p_bodies);
+void initDisplay(int lXRes, int lYRes);
+GLFWwindow* setupWindow(void);
 
 int main() {
+  // Setup window and give pointer
+  GLFWwindow* window = setupWindow();
+
   // Initialise tree variables
   node* treeRoot;
   bounds* initial = malloc(sizeof(bounds));
@@ -44,4 +50,44 @@ void addRandomBodies(node* p_root, int p_bodies) {
     rY = (((float)rand()/(float)(RAND_MAX)) * max) - 10;
     addBody(createBody(1, rX, rY, 0, 0), p_root);
   }
+}
+
+void initDisplay(int lXRes, int lYRes) {
+  // Init Projection
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(-lXRes, lXRes, -lYRes, lYRes, 1.0f, -1.0f);
+
+  // Init Modelview
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+  // Set Viewport Extents
+  glViewport(0, 0, lXRes, lYRes);
+  glClearColor(0.0f, 0.0f, 0.0f, 1);
+}
+
+GLFWwindow* setupWindow(void) {
+  // Try init GLFW
+  if(!glfwInit()) {
+    fprintf(stderr, "GLFW could not init.\n");
+    exit(1);
+  }
+
+  // Create window
+  GLFWwindow* window = glfwCreateWindow(500, 500, "QuadTree Example", NULL, NULL);
+
+  // Check that window opened
+  if(!window) {
+    // Terminate if not
+    fprintf(stderr, "GLFW could not create window.\n");
+    glfwTerminate();
+    exit(1);
+  }
+
+  glfwMakeContextCurrent(window);
+  initDisplay(500, 500);
+  //setCallbacks();
+
+  return window;
 }
