@@ -62,38 +62,28 @@ bounds* newBounds(int quadrant, bounds* p_currentBounds) {
 }
 
 void updateNodeMP(node* p_currentNode) {
-  float nodeMass = 0;
-  float nodePosX = 0;
-  float nodePosY = 0;
+  int hasBranches = 0;
+  for(int c = 0; c < 4; c++) {
+    if(p_currentNode->branches[c]) {
+      hasBranches = 1;
+    }
+  }
+  if(hasBranches) {
+    p_currentNode->nodeBody->m = 0;
+    p_currentNode->nodeBody->xP = 0;
+    p_currentNode->nodeBody->yP = 0;
+  }
 
   // Check for branches
   for(int q = 0; q < 4; q++) {
     if(p_currentNode->branches[q]) {
       // Recurse down into branch
       updateNodeMP(p_currentNode->branches[q]);
-
       if(p_currentNode->branches[q]->nodeBody) {
-        // Create tempoary quick body pointer.
-        body* qbp = p_currentNode->branches[q]->nodeBody;
-
-        // Sum total mass of branches
-        nodeMass = nodeMass + qbp->m;
-
-        // Sum weighted mean position
-        nodePosX = nodePosX + (qbp->xP * qbp->m);
-        nodePosY = nodePosY + (qbp->yP * qbp->m);
+        sumBody(p_currentNode->nodeBody, p_currentNode->branches[q]->nodeBody);
       }
     }
   }
-
-  // Get final weigted mean
-  nodePosX = nodePosX / nodeMass;
-  nodePosY = nodePosY / nodeMass;
-
-  // Update current node (Branched nodes only, leaves are not modified)
-  p_currentNode->nodeBody->m = nodeMass;
-  p_currentNode->nodeBody->xP = nodePosX;
-  p_currentNode->nodeBody->yP = nodePosY;
 }
 
 int firstNewBranch(node* p_currentNode) {
@@ -129,12 +119,12 @@ int addBody(body* p_body, node* p_currentNode) {
       addBody(p_body, p_currentNode->branches[reqBranch]); // Recursively add to branch
 
       if(firstNewBranch(p_currentNode)) {
-        // Create temp pointer to preset node body
         body* temp = p_currentNode->nodeBody;
         // Create filler body for later average
         p_currentNode->nodeBody = createBody(-1, 0, 0, 0, 0);
         addBody(temp, p_currentNode);
       }
+      // Create temp pointer to preset node body
     }
 
     // Update total mass and mean position for node

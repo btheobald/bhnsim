@@ -13,8 +13,8 @@ int main() {
   initial->halfDistance = 10;
 
   // Create initial bodies
-  body* b0 = createBody(1, 4.0, 4.0, 0, 0);
-  body* b1 = createBody(1, 8.0, 8.0, 0, 0);
+  body* b0 = createBody(1, 5.0, 1.0, 0, 0);
+  body* b1 = createBody(1, -5.0, 1.0, 0, 0);
   body* b2 = createBody(1, -8.0, -8.0, 0, 0);
 
   // Create tree root
@@ -23,9 +23,12 @@ int main() {
   // Add body to tree
   addBody(b0, treeRoot);
   addBody(b1, treeRoot);
-  //addBody(b2, treeRoot);
+  addBody(b2, treeRoot);
 
-  printf("Total root node mass = %f.\n", treeRoot->nodeBody->m);
+  updateNodeMP(treeRoot);
+
+  printf("Root node mass = %f.\n", treeRoot->nodeBody->m);
+  printf("Root node position = %f, %f.\n", treeRoot->nodeBody->xP, treeRoot->nodeBody->yP);
 
   // Print tree
   printTree(treeRoot, 0);
