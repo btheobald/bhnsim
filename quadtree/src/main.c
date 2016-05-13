@@ -25,7 +25,7 @@ int main() {
   treeRoot = createNode(initial);
 
   // Add Random initial bodies
-  addRandomBodies(treeRoot, 1000);
+  addRandomBodies(treeRoot, 2);
 
   updateNodeMP(treeRoot);
 
@@ -33,7 +33,13 @@ int main() {
   printf("Root node position = %f, %f.\n", treeRoot->nodeBody->xP, treeRoot->nodeBody->yP);
 
   // Print tree
-  printTree(treeRoot, 0);
+  //printTree(treeRoot, 0);
+
+  glClear(GL_COLOR_BUFFER_BIT);
+  drawTree(treeRoot);
+  glfwSwapBuffers(window);
+
+  while(1) { }
 
   // Free tree memory
   delTree(treeRoot);
@@ -46,8 +52,8 @@ void addRandomBodies(node* p_root, int p_bodies) {
   float rX, rY;
 
   for(int n = 0; n < p_bodies; n++) {
-    rX = (((float)rand()/(float)(RAND_MAX)) * max) - 10;
-    rY = (((float)rand()/(float)(RAND_MAX)) * max) - 10;
+    rX = (((float)rand()/(float)(RAND_MAX)) * max) - 1000;
+    rY = (((float)rand()/(float)(RAND_MAX)) * max) - 1000;
     addBody(createBody(1, rX, rY, 0, 0), p_root);
   }
 }
@@ -56,7 +62,7 @@ void initDisplay(int lXRes, int lYRes) {
   // Init Projection
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(-lXRes, lXRes, -lYRes, lYRes, 1.0f, -1.0f);
+  glOrtho(-lXRes*5, lXRes*5, -lYRes*5, lYRes*5, 1.0f, -1.0f);
 
   // Init Modelview
   glMatrixMode(GL_MODELVIEW);
