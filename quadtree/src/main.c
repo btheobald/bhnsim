@@ -47,10 +47,7 @@ int main() {
   int s_held = 0;
   int d_held = 0;
 
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  addRandomBodies(treeRoot, 1);
+  //addRandomBodies(treeRoot, 1);
   while(!glfwWindowShouldClose(window)) {
   //while(i < 1000) {
     glClear(GL_COLOR_BUFFER_BIT);
