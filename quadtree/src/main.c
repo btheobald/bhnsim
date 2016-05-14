@@ -1,3 +1,4 @@
+#include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -28,25 +29,39 @@ int main() {
 
   // Add Random initial bodies
   //addRandomBodies(treeRoot, 1000);
-  addStructure(treeRoot, 2000, 0, 0, 20, 2000);
-  addStructure(treeRoot, 1000, 2500, 3000, 20, 1000);
+  //addStructure(treeRoot, 500, 0, 0, 20, 2000);
+  //addStructure(treeRoot, 250, 2500, 3000, 20, 1000);
 
   updateNodeMP(treeRoot);
 
-  printf("Root node mass = %f.\n", treeRoot->nodeBody->m);
-  printf("Root node position = %f, %f.\n", treeRoot->nodeBody->xP, treeRoot->nodeBody->yP);
+  //printf("Root node mass = %f.\n", treeRoot->nodeBody->m);
+  //printf("Root node position = %f, %f.\n", treeRoot->nodeBody->xP, treeRoot->nodeBody->yP);
 
   // Print tree
   //printTree(treeRoot, 0);
 
-  glClear(GL_COLOR_BUFFER_BIT);
-  drawTree(treeRoot);
-  glfwSwapBuffers(window);
+  while(!glfwWindowShouldClose(window)) {
+  int i = 0;
+  //while(i < 1000) {
+    glClear(GL_COLOR_BUFFER_BIT);
 
-  while(1) { }
+    addRandomBodies(treeRoot, 1);
+
+    drawTree(treeRoot);
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+
+    i++;
+  }
 
   // Free tree memory
   delTree(treeRoot);
+
+  glfwDestroyWindow(window);
+  glfwTerminate();
+
+  return 0;
 }
 
 void addRandomBodies(node* p_root, int p_bodies) {
