@@ -1,7 +1,7 @@
 # Project Name
 NAME = quadtree
 # Compiler
-CC = clang
+CC = gcc
 TARGET = $(NAME).out
 
 # Linker
@@ -17,12 +17,12 @@ INCLUDES   := $(wildcard $(INCLUDE_DIR)/*.h)
 OBJECTS    := $(SOURCES:$(SOURCE_DIR)/%.c=$(BINARY_DIR)/%.o)
 
 # Libraries
-LIBS  =
+LIBS  = `pkg-config --static --libs glfw3`
 # Debugger
 DB    = gdb
 DBOPT =
 # Compiler Flags
-CFLAGS = -std=c99 -Wall -I$(INCLUDE_DIR) -g
+CFLAGS = -std=c99 -Wall -I$(INCLUDE_DIR) -g `pkg-config --cflags glfw3`
 # Linker Flags
 LFLAGS = -Wall $(LIBS)
 

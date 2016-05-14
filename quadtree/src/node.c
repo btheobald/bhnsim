@@ -41,20 +41,20 @@ bounds* newBounds(int quadrant, bounds* p_currentBounds) {
 
   // Set new center point
   if(quadrant == 0) {
-    tempBounds->centerX = p_currentBounds->centerX-p_currentBounds->halfDistance;
-    tempBounds->centerY = p_currentBounds->centerY+p_currentBounds->halfDistance;
+    tempBounds->centerX = p_currentBounds->centerX-p_currentBounds->halfDistance/2;
+    tempBounds->centerY = p_currentBounds->centerY+p_currentBounds->halfDistance/2;
   }
   if(quadrant == 1) {
-    tempBounds->centerX = p_currentBounds->centerX+p_currentBounds->halfDistance;
-    tempBounds->centerY = p_currentBounds->centerY+p_currentBounds->halfDistance;
+    tempBounds->centerX = p_currentBounds->centerX+p_currentBounds->halfDistance/2;
+    tempBounds->centerY = p_currentBounds->centerY+p_currentBounds->halfDistance/2;
   }
   if(quadrant == 2) {
-    tempBounds->centerX = p_currentBounds->centerX-p_currentBounds->halfDistance;
-    tempBounds->centerY = p_currentBounds->centerY-p_currentBounds->halfDistance;
+    tempBounds->centerX = p_currentBounds->centerX-p_currentBounds->halfDistance/2;
+    tempBounds->centerY = p_currentBounds->centerY-p_currentBounds->halfDistance/2;
   }
   if(quadrant == 3) {
-    tempBounds->centerX = p_currentBounds->centerX+p_currentBounds->halfDistance;
-    tempBounds->centerY = p_currentBounds->centerY-p_currentBounds->halfDistance;
+    tempBounds->centerX = p_currentBounds->centerX+p_currentBounds->halfDistance/2;
+    tempBounds->centerY = p_currentBounds->centerY-p_currentBounds->halfDistance/2;
   }
 
   // Return new calculated bounds

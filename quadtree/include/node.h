@@ -1,3 +1,6 @@
+#ifndef NODE_H_GUARD
+#define NODE_H_GUARD
+
 #include "body.h"
 
 typedef struct {
@@ -42,3 +45,5 @@ int addBody(body* p_body, node* p_currentNode);
 void delTree(node* rootNode);
 
 void printTree(node* rootNode, int level);
+
+#endif /* end of include guard: NODE_H_GUARD */
