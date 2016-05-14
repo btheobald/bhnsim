@@ -22,7 +22,7 @@ LIBS  = `pkg-config --static --libs glfw3`
 DB    = gdb
 DBOPT =
 # Compiler Flags
-CFLAGS = -std=c99 -Wall -I$(INCLUDE_DIR) -g `pkg-config --cflags glfw3`
+CFLAGS = -std=c99 -Wall -I$(INCLUDE_DIR) -g `pkg-config --cflags glfw3` -Ofast
 # Linker Flags
 LFLAGS = -Wall $(LIBS)
 

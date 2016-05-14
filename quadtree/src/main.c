@@ -7,7 +7,7 @@
 #include "render.h"
 
 const float squareSize = 4000;
-const int displayRes = 500;
+const int displayRes = 700;
 
 void addStructure(node* treeRoot, int p_soBodies, float p_xP, float p_yP, float p_coS, float p_sR);
 void addRandomBodies(node* p_root, int p_bodies);
@@ -44,23 +44,37 @@ int main() {
   // Print tree
   //printTree(treeRoot, 0);
 
-  int held = 0;
+  int s_held = 0;
+  int d_held = 0;
+
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   addRandomBodies(treeRoot, 1);
   while(!glfwWindowShouldClose(window)) {
   //while(i < 1000) {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    if(glfwGetKey(window, GLFW_KEY_A) | (glfwGetKey(window, GLFW_KEY_S) & !held)) {
-      held = 1;
+    if(glfwGetKey(window, GLFW_KEY_A) | (glfwGetKey(window, GLFW_KEY_S) & !s_held)) {
+      s_held = 1;
       addRandomBodies(treeRoot, 1);
     }
 
-    if(!glfwGetKey(window, GLFW_KEY_S)) {
-      printf("Held Cleared\n");
-      held = 0;
+    if((glfwGetKey(window, GLFW_KEY_D) & !d_held)) {
+      d_held = 1;
+      addRandomBodies(treeRoot, 1000);
     }
-    drawTree(treeRoot);
+
+    if(!glfwGetKey(window, GLFW_KEY_S)) {
+      s_held = 0;
+    }
+    if(!glfwGetKey(window, GLFW_KEY_D)) {
+      d_held = 0;
+    }
+
+    //updateNodeMP(treeRoot);
+
+    drawTree(treeRoot, 0);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -110,7 +124,7 @@ void initDisplay(int lXRes, int lYRes) {
   // Init Projection
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(-lXRes*4, lXRes*4, -lYRes*4, lYRes*4, 1.0f, -1.0f);
+  glOrtho(-lXRes*3, lXRes*3, -lYRes*3, lYRes*3, 1.0f, -1.0f);
 
   // Init Modelview
   glMatrixMode(GL_MODELVIEW);
