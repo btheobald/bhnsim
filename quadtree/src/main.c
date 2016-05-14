@@ -19,7 +19,7 @@ int main() {
   treeRoot = createNode(initial);
 
   // Add Random initial bodies
-  addRandomBodies(treeRoot, 1000);
+  addRandomBodies(treeRoot, 20);
 
   updateNodeMP(treeRoot);
 
