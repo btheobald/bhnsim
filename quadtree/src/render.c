@@ -19,7 +19,7 @@ void drawPoints(bounds* p_nodeBounds, int level) {
   //  glVertex2f(p_nodeBounds->centerX + p_nodeBounds->halfDistance, p_nodeBounds->centerY - p_nodeBounds->halfDistance);
   //  glVertex2f(p_nodeBounds->centerX - p_nodeBounds->halfDistance, p_nodeBounds->centerY - p_nodeBounds->halfDistance);
   //glEnd();
-  glColor3b(16, 16, 16);
+  glColor3b(32, 32, 32);
   glBegin(GL_LINE_LOOP);
     glVertex2f(p_nodeBounds->centerX - p_nodeBounds->halfDistance, p_nodeBounds->centerY + p_nodeBounds->halfDistance);
     glVertex2f(p_nodeBounds->centerX + p_nodeBounds->halfDistance, p_nodeBounds->centerY + p_nodeBounds->halfDistance);
