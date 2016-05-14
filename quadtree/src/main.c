@@ -6,12 +6,17 @@
 #include "node.h"
 #include "render.h"
 
+const float squareSize = 4000;
+const int displayRes = 500;
+
 void addStructure(node* treeRoot, int p_soBodies, float p_xP, float p_yP, float p_coS, float p_sR);
 void addRandomBodies(node* p_root, int p_bodies);
 void initDisplay(int lXRes, int lYRes);
 GLFWwindow* setupWindow(void);
 
 int main() {
+  srand(time(NULL));
+
   // Setup window and give pointer
   GLFWwindow* window = setupWindow();
 
@@ -22,7 +27,7 @@ int main() {
   // Setup initial bounds
   initial->centerX = 0;
   initial->centerY = 0;
-  initial->halfDistance = 4000;
+  initial->halfDistance = squareSize/2;
 
   // Create tree root
   treeRoot = createNode(initial);
@@ -31,7 +36,7 @@ int main() {
   //addStructure(treeRoot, 500, 0, 0, 20, 2000);
   //addStructure(treeRoot, 250, 2500, 3000, 20, 1000);
 
-  updateNodeMP(treeRoot);
+  //updateNodeMP(treeRoot);
 
   //printf("Root node mass = %f.\n", treeRoot->nodeBody->m);
   //printf("Root node position = %f, %f.\n", treeRoot->nodeBody->xP, treeRoot->nodeBody->yP);
@@ -39,19 +44,18 @@ int main() {
   // Print tree
   //printTree(treeRoot, 0);
 
+  addRandomBodies(treeRoot, 1);
   while(!glfwWindowShouldClose(window)) {
-  int i = 0;
   //while(i < 1000) {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    addRandomBodies(treeRoot, 1);
-
+    if(glfwGetKey(window, GLFW_KEY_A)) {
+      addRandomBodies(treeRoot, 1);
+    }
     drawTree(treeRoot);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
-
-    i++;
   }
 
   // Free tree memory
@@ -64,14 +68,10 @@ int main() {
 }
 
 void addRandomBodies(node* p_root, int p_bodies) {
-  srand(time(NULL));
-
-  float max = 8000.0;
   float rX, rY;
-
   for(int n = 0; n < p_bodies; n++) {
-    rX = (((float)rand()/(float)(RAND_MAX)) * max) - 4000;
-    rY = (((float)rand()/(float)(RAND_MAX)) * max) - 4000;
+    rX = (((float)rand()/(float)(RAND_MAX)) * squareSize) - squareSize/2;
+    rY = (((float)rand()/(float)(RAND_MAX)) * squareSize) - squareSize/2;
     addBody(createBody(1, rX, rY, 0, 0), p_root);
   }
 }
@@ -91,8 +91,8 @@ void addStructure(node* treeRoot, int p_soBodies, float p_xP, float p_yP, float 
       tempRand = (((float)rand()/(float)(RAND_MAX)) * max) - p_sR;
     } while((tempRand < p_coS) & (tempRand > -p_coS));
     // Map to Circle
-    tempCirX = p_xP+(tempRand * cos(2 * 3.14 * tempRand));
-    tempCirY = p_yP+(tempRand * sin(2 * 3.14 * tempRand));
+    tempCirX = p_xP+(tempRand * cos(2 * 3.14592 * tempRand));
+    tempCirY = p_yP+(tempRand * sin(2 * 3.14592 * tempRand));
 
     addBody(createBody(1, tempCirX, tempCirY, 0, 0), treeRoot);
   }
@@ -121,7 +121,7 @@ GLFWwindow* setupWindow(void) {
   }
 
   // Create window
-  GLFWwindow* window = glfwCreateWindow(1000, 1000, "QuadTree Example", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(displayRes, displayRes, "QuadTree Example", NULL, NULL);
 
   // Check that window opened
   if(!window) {
@@ -132,7 +132,8 @@ GLFWwindow* setupWindow(void) {
   }
 
   glfwMakeContextCurrent(window);
-  initDisplay(1000, 1000);
+  initDisplay(displayRes, displayRes);
+  glfwSwapInterval(2);
   //setCallbacks();
 
   return window;
