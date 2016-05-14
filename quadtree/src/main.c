@@ -44,13 +44,21 @@ int main() {
   // Print tree
   //printTree(treeRoot, 0);
 
+  int held = 0;
+
   addRandomBodies(treeRoot, 1);
   while(!glfwWindowShouldClose(window)) {
   //while(i < 1000) {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    if(glfwGetKey(window, GLFW_KEY_A)) {
+    if(glfwGetKey(window, GLFW_KEY_A) | (glfwGetKey(window, GLFW_KEY_S) & !held)) {
+      held = 1;
       addRandomBodies(treeRoot, 1);
+    }
+
+    if(!glfwGetKey(window, GLFW_KEY_S)) {
+      printf("Held Cleared\n");
+      held = 0;
     }
     drawTree(treeRoot);
 
@@ -133,7 +141,7 @@ GLFWwindow* setupWindow(void) {
 
   glfwMakeContextCurrent(window);
   initDisplay(displayRes, displayRes);
-  glfwSwapInterval(2);
+  glfwSwapInterval(1);
   //setCallbacks();
 
   return window;
