@@ -5,6 +5,7 @@
 #include <math.h>
 #include "node.h"
 #include "render.h"
+#include "input.h"
 
 const float squareSize = 4000;
 const int displayRes = 700;
@@ -31,6 +32,7 @@ int main() {
 
   // Create tree root
   treeRoot = createNode(initial);
+  cbTreeAccess = treeRoot;
 
   //addRandomBodies(treeRoot, 1000);
   //addStructure(treeRoot, 500, 0, 0, 20, 2000);
@@ -153,7 +155,7 @@ GLFWwindow* setupWindow(void) {
   glfwMakeContextCurrent(window);
   initDisplay(displayRes, displayRes);
   glfwSwapInterval(1);
-  //setCallbacks();
+  setCallbacks(window);
 
   return window;
 }
