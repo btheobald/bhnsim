@@ -28,7 +28,7 @@ LFLAGS = -Wall $(LIBS)
 
 # Link
 $(TARGET): $(OBJECTS)
-	@$(LINKER) $@ $(LFLAGS) $(OBJECTS)
+	@$(LINKER) $@ $(OBJECTS) $(LFLAGS)
 	@echo "Linking Complete"
 
 # Compile
