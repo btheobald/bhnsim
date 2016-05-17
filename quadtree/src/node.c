@@ -165,3 +165,12 @@ void printTree(node* rootNode, int level) {
     }
   }
 }
+
+void addRandomBodies(node *p_root, int p_bodies) {
+  float rX, rY;
+  for (int n = 0; n < p_bodies; n++) {
+    rX = (((float)rand() / (float)(RAND_MAX)) * p_root->nodeBounds->halfDistance*2) - p_root->nodeBounds->halfDistance;
+    rY = (((float)rand() / (float)(RAND_MAX)) * p_root->nodeBounds->halfDistance*2) - p_root->nodeBounds->halfDistance;
+    addBody(createBody(1, rX, rY, 0, 0), p_root);
+  }
+}

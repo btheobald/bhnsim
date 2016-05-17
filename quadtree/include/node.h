@@ -41,6 +41,8 @@ int firstNewBranch(node* p_currentNode);
 // Inset a body into the tree.
 int addBody(body* p_body, node* p_currentNode);
 
+void addRandomBodies(node *p_root, int p_bodies);
+
 // Delete tree recursively
 void delTree(node* rootNode);
 
