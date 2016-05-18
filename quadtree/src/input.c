@@ -1,5 +1,6 @@
 #include "input.h"
 #include "node.h"
+#include <stdio.h>
 
 void getCoord(GLFWwindow *window, double *aX, double *aY) {
   double mX, mY; // Window system mouse
@@ -39,8 +40,14 @@ void cursorPosCallback(GLFWwindow *window, double xpos, double ypos) {
 void keyEventCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
   node* tree = (node*) glfwGetWindowUserPointer(window);
 
-  if ((key == GLFW_KEY_A) & (action == GLFW_PRESS)) addRandomBodies(tree, 1);
+  if (key == GLFW_KEY_S) {
+    printf("%d\n", action);
+  }
+
+  if ((key == GLFW_KEY_A) & (action == GLFW_REPEAT)) addRandomBodies(tree, 1);
+  if ((key == GLFW_KEY_S) & (action == GLFW_PRESS)) addRandomBodies(tree, 1);
   if ((key == GLFW_KEY_D) & (action == GLFW_PRESS)) addRandomBodies(tree, 1000);
+  //if ((key == GLFW_KEY_X) & (action == GLFW_PRESS)) delTree(tree);
 }
 
 void windowResizeCallback(GLFWwindow *window, int width, int height) {
